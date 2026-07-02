@@ -5,7 +5,6 @@ import Box from "@material-ui/core/Box";
 
 import HeaderSearchBar from "../components/mobileMap/HeaderSearchBar";
 import MapControls from "../components/mobileMap/MapControls";
-import Crosshair from "../components/mobileMap/Crosshair";
 import BottomNav from "../components/mobileMap/BottomNav";
 import BottomMenuSheet from "../components/mobileMap/BottomMenuSheet";
 import LayerSidebar from "../components/mobileMap/LayerSidebar";
@@ -15,11 +14,15 @@ const useStyles = makeStyles(() => ({
   root: {
     position: "relative",
     width: "100vw",
-    height: "100vh",
+
+    // Android Chrome のアドレスバー対策
+    height: "var(--app-height, 100dvh)",
+    minHeight: "var(--app-height, 100dvh)",
+
     overflow: "hidden",
     background: "#f3f4f6",
     fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     WebkitTapHighlightColor: "transparent",
   },
 }));
@@ -41,9 +44,42 @@ export default function MobileMapPage() {
       link.id = fontId;
       link.rel = "stylesheet";
       link.href =
-        "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap";
+          "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap";
       document.head.appendChild(link);
     }
+  }, []);
+
+  useEffect(() => {
+    const updateAppHeight = () => {
+      const height = window.visualViewport
+          ? window.visualViewport.height
+          : window.innerHeight;
+
+      document.documentElement.style.setProperty(
+          "--app-height",
+          `${height}px`
+      );
+    };
+
+    updateAppHeight();
+
+    window.addEventListener("resize", updateAppHeight);
+    window.addEventListener("orientationchange", updateAppHeight);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateAppHeight);
+      window.visualViewport.addEventListener("scroll", updateAppHeight);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateAppHeight);
+      window.removeEventListener("orientationchange", updateAppHeight);
+
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", updateAppHeight);
+        window.visualViewport.removeEventListener("scroll", updateAppHeight);
+      }
+    };
   }, []);
 
   const openPanel = (panelId) => {
@@ -64,35 +100,35 @@ export default function MobileMapPage() {
   };
 
   return (
-    <Box className={classes.root}>
-      <OpenLayersMap />
+      <Box className={classes.root}>
+        <OpenLayersMap />
 
-      <HeaderSearchBar onOpenMenu={() => openPanel("globalMenu")} />
+        <HeaderSearchBar onOpenMenu={() => openPanel("globalMenu")} />
 
-      <MapControls onOpenLayerSidebar={openLayerSidebar} />
+        <MapControls onOpenLayerSidebar={openLayerSidebar} />
 
-      <BottomMenuSheet
-        activePanel={activePanel}
-        onClose={closePanel}
-        onOpenLayerSidebar={openLayerSidebar}
-      />
+        <BottomMenuSheet
+            activePanel={activePanel}
+            onClose={closePanel}
+            onOpenLayerSidebar={openLayerSidebar}
+        />
 
-      <BottomNav activePanel={activePanel} onOpenPanel={openPanel} />
+        <BottomNav activePanel={activePanel} onOpenPanel={openPanel} />
 
-      <LayerSidebar
-        open={layerSidebarOpen}
-        onClose={closeLayerSidebar}
-        baseLayer={baseLayer}
-        onChangeBaseLayer={setBaseLayer}
-        addressLayerVisible={addressLayerVisible}
-        onToggleAddressLayer={() =>
-          setAddressLayerVisible((current) => !current)
-        }
-        shapeLayerVisible={shapeLayerVisible}
-        onToggleShapeLayer={() =>
-          setShapeLayerVisible((current) => !current)
-        }
-      />
-    </Box>
+        <LayerSidebar
+            open={layerSidebarOpen}
+            onClose={closeLayerSidebar}
+            baseLayer={baseLayer}
+            onChangeBaseLayer={setBaseLayer}
+            addressLayerVisible={addressLayerVisible}
+            onToggleAddressLayer={() =>
+                setAddressLayerVisible((current) => !current)
+            }
+            shapeLayerVisible={shapeLayerVisible}
+            onToggleShapeLayer={() =>
+                setShapeLayerVisible((current) => !current)
+            }
+        />
+      </Box>
   );
 }

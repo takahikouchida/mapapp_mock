@@ -11,7 +11,7 @@ const EmojiTransportationIcon =
 
 const useStyles = makeStyles(() => ({
   bottomNav: {
-    position: "absolute",
+    position: "fixed",
     left: 0,
     right: 0,
     bottom: 0,

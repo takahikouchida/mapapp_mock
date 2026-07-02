@@ -8,23 +8,23 @@ import MenuItem from "./MenuItem";
 import PointAddPanel from "./PointAddPanel";
 
 const useStyles = makeStyles(() => ({
-  bottomSheet: {
-    position: "fixed",
-    left: 0,
-    right: 0,
-    bottom: 64,
-    backgroundColor: "#ffffff",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    boxShadow: "0 -4px 20px rgba(0,0,0,0.12)",
-    zIndex: 50,
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
-    height: "46vh",
-    maxHeight: 460,
-    minHeight: 330,
-  },
+    bottomSheet: {
+        position: "fixed",
+        left: 0,
+        right: 0,
+        bottom: "calc(64px + env(safe-area-inset-bottom))",
+        backgroundColor: "#ffffff",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        boxShadow: "0 -4px 20px rgba(0,0,0,0.12)",
+        zIndex: 50,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        height: "46vh",
+        maxHeight: 460,
+        minHeight: 330,
+    },
 
   bottomSheetHandle: {
     width: 40,
