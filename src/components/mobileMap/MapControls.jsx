@@ -17,11 +17,15 @@ const useStyles = makeStyles((theme) => ({
   mapControls: {
     position: "absolute",
     right: 16,
-    bottom: 88,
+    bottom: ({ bottomSheetOpen }) =>
+      bottomSheetOpen
+        ? "calc(clamp(330px, 46vh, 460px) + 88px + env(safe-area-inset-bottom))"
+        : 88,
     display: "flex",
     flexDirection: "column",
     gap: 12,
     zIndex: 30,
+    transition: "bottom 220ms ease",
   },
   glassUi: {
     background: "rgba(255, 255, 255, 0.95)",
@@ -59,8 +63,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MapControls({ onOpenLayerSidebar }) {
-  const classes = useStyles();
+export default function MapControls({ bottomSheetOpen = false, onOpenLayerSidebar }) {
+  const classes = useStyles({ bottomSheetOpen });
 
   return (
     <Box className={classes.mapControls}>

@@ -25,9 +25,7 @@ const useStyles = makeStyles((theme) => ({
   bottomSheet: {
     display: "flex",
     flexDirection: "column",
-    height: "46vh",
-    minHeight: 330,
-    maxHeight: 460,
+    height: "clamp(330px, 46vh, 460px)",
   },
   handle: {
     width: 40,

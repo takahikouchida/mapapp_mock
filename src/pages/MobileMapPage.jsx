@@ -99,7 +99,10 @@ export default function MobileMapPage() {
 
         <HeaderSearchBar onOpenMenu={() => openPanel("globalMenu")} />
 
-        <MapControls onOpenLayerSidebar={openLayerSidebar} />
+        <MapControls
+            bottomSheetOpen={Boolean(activePanel)}
+            onOpenLayerSidebar={openLayerSidebar}
+        />
 
         <BottomMenuSheet
             activePanel={activePanel}
