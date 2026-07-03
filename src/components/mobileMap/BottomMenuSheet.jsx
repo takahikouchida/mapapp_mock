@@ -1,109 +1,95 @@
-import React from "react";
+import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Box from "@material-ui/core/Box";
+import Drawer from "@material-ui/core/Drawer";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
+import CloseIconModule from "@material-ui/icons/Close";
 
 import MenuItem from "./MenuItem";
 import PointAddPanel from "./PointAddPanel";
 
-const useStyles = makeStyles(() => ({
-    bottomSheet: {
-        position: "fixed",
-        left: 0,
-        right: 0,
-        bottom: "calc(64px + env(safe-area-inset-bottom))",
-        backgroundColor: "#ffffff",
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        boxShadow: "0 -4px 20px rgba(0,0,0,0.12)",
-        zIndex: 50,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        height: "46vh",
-        maxHeight: 460,
-        minHeight: 330,
-    },
+const CloseIcon = CloseIconModule.default || CloseIconModule;
 
-  bottomSheetHandle: {
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: "hidden",
+    maxHeight: "calc(var(--app-height, 100dvh) - 88px)",
+    bottom: "calc(64px + env(safe-area-inset-bottom))",
+    boxShadow: "0 -4px 20px rgba(0,0,0,0.12)",
+  },
+  bottomSheet: {
+    display: "flex",
+    flexDirection: "column",
+    height: "46vh",
+    minHeight: 330,
+    maxHeight: 460,
+  },
+  handle: {
     width: 40,
     height: 4,
     backgroundColor: "#e2e8f0",
     borderRadius: 2,
     margin: "12px auto 10px",
+    flexShrink: 0,
   },
-
-  bottomSheetHeader: {
+  header: {
     display: "flex",
+    alignItems: "center",
     justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0 24px 12px",
+    padding: theme.spacing(0, 2, 1.25, 3),
+    flexShrink: 0,
   },
-
-  bottomSheetHeaderLeft: {
-    display: "flex",
-    alignItems: "center",
-    gap: 8,
-    minWidth: 0,
-  },
-
-  bottomSheetTitle: {
+  title: {
     fontWeight: 700,
-    color: "#1f2937",
+    color: theme.palette.text.primary,
     fontSize: 18,
     lineHeight: 1.2,
-    whiteSpace: "nowrap",
   },
-
-  bottomSheetMeta: {
-    color: "#9ca3af",
+  meta: {
+    color: theme.palette.text.disabled,
     fontSize: 12,
     whiteSpace: "nowrap",
   },
-
+  headerActions: {
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing(1),
+  },
   closeButton: {
     width: 32,
     height: 32,
-    border: "none",
-    borderRadius: 16,
     backgroundColor: "#f3f4f6",
-    color: "#6b7280",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    padding: 0,
-    outline: "none",
+    color: theme.palette.text.secondary,
+    "&:hover": {
+      backgroundColor: "#e5e7eb",
+    },
   },
-
-  bottomSheetBody: {
-    padding: "0 20px 16px",
+  body: {
+    padding: theme.spacing(0, 2.5, 2),
     overflowY: "auto",
   },
-
   menuList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
+    padding: 0,
   },
 }));
 
 export default function BottomMenuSheet({
-                                          activePanel,
-                                          onClose,
-                                          onOpenLayerSidebar,
-                                        }) {
+  activePanel,
+  onClose,
+  onOpenLayerSidebar,
+}) {
   const classes = useStyles();
-  const [mode, setMode] = React.useState("menu");
-
-  React.useEffect(() => {
-    setMode("menu");
-  }, [activePanel]);
-
-  if (!activePanel) {
-    return null;
-  }
+  const [modeState, setModeState] = useState({
+    panel: null,
+    mode: "menu",
+  });
+  const mode =
+    modeState.panel === activePanel && activePanel ? modeState.mode : "menu";
 
   const getPanelTitle = () => {
     if (mode === "pointAdd") {
@@ -138,110 +124,60 @@ export default function BottomMenuSheet({
   };
 
   const renderGlobalMenuPanel = () => (
-      <Box className={classes.menuList}>
-        <MenuItem
-            icon="layers"
-            title="レイヤ切替"
-            sub="背景地図や表示レイヤを切り替えます"
-            onClick={onOpenLayerSidebar}
-        />
-
-        <MenuItem
-            icon="bookmark"
-            title="ブックマーク"
-            sub="保存済みの地点を表示します"
-        />
-
-        <MenuItem
-            icon="straighten"
-            title="計測"
-            sub="距離や面積を計測します"
-        />
-
-        <MenuItem
-            icon="route"
-            title="経路検索"
-            sub="目的地までの経路を確認します"
-        />
-
-        <MenuItem
-            icon="campaign"
-            title="お知らせ"
-            sub="システムからのお知らせを確認します"
-        />
-
-        <MenuItem
-            icon="help"
-            title="ヘルプ"
-            sub="使い方や操作方法を確認します"
-        />
-
-        <MenuItem
-            icon="mail"
-            title="お問い合わせ"
-            sub="問い合わせフォームを表示します"
-        />
-
-        <MenuItem
-            icon="settings"
-            title="設定"
-            sub="表示や操作の設定を変更します"
-        />
-      </Box>
+    <List className={classes.menuList}>
+      <MenuItem
+        icon="layers"
+        title="レイヤ切替"
+        sub="背景地図や表示レイヤを切り替えます"
+        onClick={onOpenLayerSidebar}
+      />
+      <MenuItem icon="bookmark" title="ブックマーク" sub="保存済みの地点を表示します" />
+      <MenuItem icon="straighten" title="計測" sub="距離や面積を計測します" />
+      <MenuItem icon="route" title="経路検索" sub="目的地までの経路を確認します" />
+      <MenuItem icon="campaign" title="お知らせ" sub="システムからのお知らせを確認します" />
+      <MenuItem icon="help" title="ヘルプ" sub="使い方や操作方法を確認します" />
+      <MenuItem icon="mail" title="お問い合わせ" sub="問い合わせフォームを表示します" />
+      <MenuItem icon="settings" title="設定" sub="表示や操作の設定を変更します" />
+    </List>
   );
 
   const renderAddressPanel = () => (
-      <Box className={classes.menuList}>
-        <MenuItem
-            icon="add_location"
-            title="ポイントの追加"
-            sub="地図上の位置に住所ポイントを追加します"
-            onClick={() => setMode("pointAdd")}
-        />
-
-        <MenuItem
-            icon="add_a_photo"
-            title="写真投稿"
-            sub="現在位置に写真を添付して投稿します"
-        />
-
-        <MenuItem
-            icon="list_alt"
-            title="リスト一覧表示"
-            sub="登録済みの住所リストを確認します"
-        />
-      </Box>
+    <List className={classes.menuList}>
+      <MenuItem
+        icon="add_location"
+        title="ポイントの追加"
+        sub="地図上の位置に住所ポイントを追加します"
+        onClick={() => setModeState({ panel: activePanel, mode: "pointAdd" })}
+      />
+      <MenuItem icon="add_a_photo" title="写真投稿" sub="現在位置に写真を添付して投稿します" />
+      <MenuItem icon="list_alt" title="リスト一覧表示" sub="登録済みの住所リストを確認します" />
+    </List>
   );
 
   const renderShapePanel = () => (
-      <Box className={classes.menuList}>
-        <MenuItem
-            icon="format_list_bulleted"
-            title="図形リスト表示"
-            sub="作成済みの図形を一覧で確認します"
-        />
-      </Box>
+    <List className={classes.menuList}>
+      <MenuItem
+        icon="format_list_bulleted"
+        title="図形リスト表示"
+        sub="作成済みの図形を一覧で確認します"
+      />
+    </List>
   );
 
   const renderOtherPanel = () => (
-      <Box className={classes.menuList}>
-        <MenuItem
-            icon="link"
-            title="リンク"
-            sub="現在位置を共有するリンクを作成します"
-        />
-
-        <MenuItem
-            icon="settings"
-            title="設定"
-            sub="表示や操作の設定を変更します"
-        />
-      </Box>
+    <List className={classes.menuList}>
+      <MenuItem icon="link" title="リンク" sub="現在位置を共有するリンクを作成します" />
+      <MenuItem icon="settings" title="設定" sub="表示や操作の設定を変更します" />
+    </List>
   );
 
   const renderPanelBody = () => {
     if (mode === "pointAdd") {
-      return <PointAddPanel onBack={() => setMode("menu")} />;
+      return (
+        <PointAddPanel
+          onBack={() => setModeState({ panel: activePanel, mode: "menu" })}
+        />
+      );
     }
 
     switch (activePanel) {
@@ -259,28 +195,33 @@ export default function BottomMenuSheet({
   };
 
   return (
+    <Drawer
+      anchor="bottom"
+      variant="persistent"
+      open={Boolean(activePanel)}
+      onClose={onClose}
+      classes={{ paper: classes.paper }}
+    >
       <Box className={classes.bottomSheet}>
-        <Box className={classes.bottomSheetHandle} />
+        <Box className={classes.handle} />
 
-        <Box className={classes.bottomSheetHeader}>
-          <Box className={classes.bottomSheetHeaderLeft}>
-            <Typography className={classes.bottomSheetTitle}>
-              {getPanelTitle()}
-            </Typography>
-          </Box>
+        <Box className={classes.header}>
+          <Typography className={classes.title}>{getPanelTitle()}</Typography>
 
-          <Box style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Typography className={classes.bottomSheetMeta}>
-              {getPanelMeta()}
-            </Typography>
-
-            <button type="button" className={classes.closeButton} onClick={onClose}>
-              <span className="material-symbols-outlined">close</span>
-            </button>
+          <Box className={classes.headerActions}>
+            <Typography className={classes.meta}>{getPanelMeta()}</Typography>
+            <IconButton
+              className={classes.closeButton}
+              aria-label="パネルを閉じる"
+              onClick={onClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
           </Box>
         </Box>
 
-        <Box className={classes.bottomSheetBody}>{renderPanelBody()}</Box>
+        <Box className={classes.body}>{renderPanelBody()}</Box>
       </Box>
+    </Drawer>
   );
 }

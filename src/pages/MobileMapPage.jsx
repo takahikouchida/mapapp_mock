@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Box from "@material-ui/core/Box";
@@ -37,19 +37,8 @@ export default function MobileMapPage() {
   const [shapeLayerVisible, setShapeLayerVisible] = useState(true);
 
   useEffect(() => {
-    const fontId = "google-material-symbols";
+    let timerId = null;
 
-    if (!document.getElementById(fontId)) {
-      const link = document.createElement("link");
-      link.id = fontId;
-      link.rel = "stylesheet";
-      link.href =
-          "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap";
-      document.head.appendChild(link);
-    }
-  }, []);
-
-  useEffect(() => {
     const updateAppHeight = () => {
       const height = window.visualViewport
           ? window.visualViewport.height
@@ -61,7 +50,11 @@ export default function MobileMapPage() {
       );
     };
 
+    // 初回実行
     updateAppHeight();
+
+    // Android Chrome 等でロード完了直後にアドレスバーの高さ計算がズレるのを防ぐための遅延実行
+    timerId = setTimeout(updateAppHeight, 100);
 
     window.addEventListener("resize", updateAppHeight);
     window.addEventListener("orientationchange", updateAppHeight);
@@ -72,6 +65,7 @@ export default function MobileMapPage() {
     }
 
     return () => {
+      if (timerId) clearTimeout(timerId);
       window.removeEventListener("resize", updateAppHeight);
       window.removeEventListener("orientationchange", updateAppHeight);
 

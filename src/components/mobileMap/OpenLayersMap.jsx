@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Map from "ol/Map";

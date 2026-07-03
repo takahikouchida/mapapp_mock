@@ -1,87 +1,92 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Typography from "@material-ui/core/Typography";
+import BottomNavigation from "@material-ui/core/BottomNavigation";
+import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import EmojiTransportationIconModule from "@material-ui/icons/EmojiTransportation";
+import GestureIconModule from "@material-ui/icons/Gesture";
+import LocationOnIconModule from "@material-ui/icons/LocationOn";
+import MoreHorizIconModule from "@material-ui/icons/MoreHoriz";
+import ThreeDRotationIconModule from "@material-ui/icons/ThreeDRotation";
 
 import { NAV_ITEMS } from "../../constants/mobileMapMenu";
 
 const EmojiTransportationIcon =
-    EmojiTransportationIconModule.default || EmojiTransportationIconModule;
+  EmojiTransportationIconModule.default || EmojiTransportationIconModule;
+const GestureIcon = GestureIconModule.default || GestureIconModule;
+const LocationOnIcon = LocationOnIconModule.default || LocationOnIconModule;
+const MoreHorizIcon = MoreHorizIconModule.default || MoreHorizIconModule;
+const ThreeDRotationIcon =
+  ThreeDRotationIconModule.default || ThreeDRotationIconModule;
 
-const useStyles = makeStyles(() => ({
+const ICONS = {
+  location_on: LocationOnIcon,
+  draw: GestureIcon,
+  emojiTransportation: EmojiTransportationIcon,
+  view_in_ar: ThreeDRotationIcon,
+  more_horiz: MoreHorizIcon,
+};
+
+const useStyles = makeStyles((theme) => ({
   bottomNav: {
     position: "fixed",
     left: 0,
     right: 0,
     bottom: 0,
     height: "calc(64px + env(safe-area-inset-bottom))",
+    paddingBottom: "env(safe-area-inset-bottom)",
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     backdropFilter: "blur(8px)",
     WebkitBackdropFilter: "blur(8px)",
-    borderTop: "1px solid #e5e7eb",
+    borderTop: `1px solid ${theme.palette.divider}`,
     zIndex: 60,
-    display: "flex",
-    alignItems: "center",
-    paddingBottom: "env(safe-area-inset-bottom)",
   },
-
-  navBtn: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+  actionRoot: {
+    minWidth: 0,
+    maxWidth: "none",
     height: 64,
-    border: "none",
-    backgroundColor: "transparent",
-    cursor: "pointer",
-    padding: 0,
-    outline: "none",
-    color: "#5f6368",
+    paddingTop: 7,
+    color: theme.palette.text.secondary,
   },
-
-  navBtnActive: {
-    color: "#1a73e8",
+  actionSelected: {
+    color: theme.palette.primary.main,
   },
-
-  navLabel: {
+  actionLabel: {
     fontSize: 10,
     fontWeight: 600,
-    marginTop: 2,
-  },
-
-  muiIcon: {
-    fontSize: 24,
+    "&$actionSelected": {
+      fontSize: 10,
+    },
   },
 }));
 
-function NavIcon({ icon, classes }) {
-  if (icon === "emojiTransportation") {
-    return <EmojiTransportationIcon className={classes.muiIcon} />;
-  }
-
-  return <span className="material-symbols-outlined">{icon}</span>;
+function NavIcon({ icon }) {
+  const IconComponent = ICONS[icon] || MoreHorizIcon;
+  return <IconComponent />;
 }
 
 export default function BottomNav({ activePanel, onOpenPanel }) {
   const classes = useStyles();
 
   return (
-      <div className={classes.bottomNav}>
-        {NAV_ITEMS.map((item) => (
-            <button
-                key={item.id}
-                type="button"
-                className={`${classes.navBtn} ${
-                    activePanel === item.id ? classes.navBtnActive : ""
-                }`}
-                onClick={() => onOpenPanel(item.id)}
-            >
-              <NavIcon icon={item.icon} classes={classes} />
-              <Typography className={classes.navLabel}>{item.label}</Typography>
-            </button>
-        ))}
-      </div>
+    <BottomNavigation
+      value={activePanel}
+      onChange={(event, value) => onOpenPanel(value)}
+      showLabels
+      className={classes.bottomNav}
+    >
+      {NAV_ITEMS.map((item) => (
+        <BottomNavigationAction
+          key={item.id}
+          value={item.id}
+          label={item.label}
+          icon={<NavIcon icon={item.icon} />}
+          classes={{
+            root: classes.actionRoot,
+            selected: classes.actionSelected,
+            label: classes.actionLabel,
+          }}
+        />
+      ))}
+    </BottomNavigation>
   );
 }

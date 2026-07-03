@@ -1,35 +1,19 @@
-:root {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-  "Helvetica Neue", Arial, sans-serif;
-  color: #111827;
-  background: #ffffff;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  /*
-   * Android Chrome のアドレスバー対策。
-   * MobileMapPage.jsx 側で window.visualViewport.height を使って更新する。
-   */
-  --app-height: 100dvh;
-}
-
-* {
-  box-sizing: border-box;
-}
+/* index.css */
 
 html,
 body,
 #root {
   width: 100%;
-  height: 100%;
+  /* height: 100%;  ← これを削除、または以下のように上書きします */
+  height: var(--app-height, 100dvh);
   margin: 0;
   padding: 0;
 }
 
 html {
   overflow: hidden;
+  /* htmlの高さも動的に固定するとより確実です */
+  height: var(--app-height, 100dvh);
 }
 
 body {
@@ -41,41 +25,6 @@ body {
 
 #root {
   position: relative;
-}
-
-/* ボタン・入力系のモバイル表示補正 */
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  -webkit-tap-highlight-color: transparent;
-}
-
-input,
-textarea {
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-/* OpenLayers の右下・左下コントロール類がフッターに隠れにくいようにする */
-.ol-control {
-  font-family: inherit;
-}
-
-.ol-attribution {
-  max-width: calc(100vw - 32px);
-}
-
-/* Material Symbols */
-.material-symbols-outlined {
-  font-variation-settings:
-          "FILL" 0,
-          "wght" 400,
-          "GRAD" 0,
-          "opsz" 24;
-  line-height: 1;
+  /* 親要素からハミ出さないように明示 */
+  overflow: hidden;
 }

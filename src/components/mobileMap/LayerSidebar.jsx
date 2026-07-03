@@ -1,386 +1,276 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import Paper from "@material-ui/core/Paper";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Slider from "@material-ui/core/Slider";
+import Switch from "@material-ui/core/Switch";
 import Typography from "@material-ui/core/Typography";
+import AppsIconModule from "@material-ui/icons/Apps";
+import ArrowDropDownIconModule from "@material-ui/icons/ArrowDropDown";
+import CloseIconModule from "@material-ui/icons/Close";
+import HomeWorkIconModule from "@material-ui/icons/HomeWork";
+import LayersClearIconModule from "@material-ui/icons/LayersClear";
+import LocationCityIconModule from "@material-ui/icons/LocationCity";
+import MapIconModule from "@material-ui/icons/Map";
+import PublicIconModule from "@material-ui/icons/Public";
+import SatelliteIconModule from "@material-ui/icons/Satellite";
+
+const AppsIcon = AppsIconModule.default || AppsIconModule;
+const ArrowDropDownIcon =
+  ArrowDropDownIconModule.default || ArrowDropDownIconModule;
+const CloseIcon = CloseIconModule.default || CloseIconModule;
+const HomeWorkIcon = HomeWorkIconModule.default || HomeWorkIconModule;
+const LayersClearIcon =
+  LayersClearIconModule.default || LayersClearIconModule;
+const LocationCityIcon =
+  LocationCityIconModule.default || LocationCityIconModule;
+const MapIcon = MapIconModule.default || MapIconModule;
+const PublicIcon = PublicIconModule.default || PublicIconModule;
+const SatelliteIcon = SatelliteIconModule.default || SatelliteIconModule;
 
 const BASE_LAYERS = [
-  { id: "map", label: "地図", icon: "map" },
-  { id: "simple", label: "シンプル", icon: "map" },
-  { id: "nolabel", label: "ラベルなし", icon: "map" },
-  { id: "photo", label: "写真", icon: "satellite_alt" },
-  { id: "blank", label: "白地図", icon: "layers_clear" },
+  { id: "map", label: "地図", Icon: MapIcon },
+  { id: "simple", label: "シンプル", Icon: MapIcon },
+  { id: "nolabel", label: "ラベルなし", Icon: MapIcon },
+  { id: "photo", label: "写真", Icon: SatelliteIcon },
+  { id: "blank", label: "白地図", Icon: LayersClearIcon },
 ];
 
-const useStyles = makeStyles(() => ({
-  sidebarBackdrop: {
-    position: "fixed",
-    inset: 0,
-    backgroundColor: "rgba(15, 23, 42, 0.16)",
-    zIndex: 70,
-  },
-
-  layerSidebar: {
-    position: "fixed",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    width: "58vw",
-    minWidth: 210,
-    maxWidth: 240,
-    backgroundColor: "#ffffff",
-    zIndex: 80,
-    boxShadow: "-10px 0 26px rgba(15, 23, 42, 0.18)",
-    transform: "translateX(100%)",
-    transition: "transform 0.25s ease",
-    display: "flex",
-    flexDirection: "column",
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    width: "min(78vw, 288px)",
+    maxWidth: 288,
     borderTopLeftRadius: 18,
     borderBottomLeftRadius: 18,
     overflow: "hidden",
   },
-
-  layerSidebarOpen: {
-    transform: "translateX(0)",
-  },
-
-  layerSidebarHeader: {
-    flexShrink: 0,
-    padding: "10px 10px 8px",
-    backgroundColor: "rgba(255,255,255,0.96)",
-    borderBottom: "1px solid #eef2f7",
-  },
-
-  layerSidebarHeaderTop: {
+  header: {
     display: "flex",
     alignItems: "center",
-    gap: 8,
+    gap: theme.spacing(1),
+    padding: theme.spacing(1.25, 1.25, 1),
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
-
-  layerSidebarCloseButton: {
-    width: 32,
-    height: 32,
-    border: "none",
-    borderRadius: 16,
+  closeButton: {
+    width: 34,
+    height: 34,
     backgroundColor: "#f3f6fb",
-    color: "#334155",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    padding: 0,
-    outline: "none",
-    flexShrink: 0,
+    color: theme.palette.text.primary,
+    "&:hover": {
+      backgroundColor: "#e5edf7",
+    },
   },
-
-  layerSidebarTitleBox: {
-    flexGrow: 1,
+  titleBox: {
+    flex: 1,
     minWidth: 0,
   },
-
-  layerSidebarTitle: {
-    fontSize: 15,
+  title: {
+    fontSize: 16,
     fontWeight: 800,
-    color: "#0f172a",
+    color: theme.palette.text.primary,
     lineHeight: 1.2,
   },
-
-  layerSidebarSubTitle: {
+  subTitle: {
     marginTop: 2,
-    fontSize: 10,
-    color: "#94a3b8",
+    fontSize: 11,
+    color: theme.palette.text.secondary,
     lineHeight: 1.2,
   },
-
-  layerSidebarBody: {
-    flex: 1,
+  body: {
+    height: "100%",
     overflowY: "auto",
-    padding: "8px 9px 14px",
+    padding: theme.spacing(1, 1.25, 2),
   },
-
   sectionTitle: {
     fontSize: 11,
     fontWeight: 800,
-    color: "#64748b",
-    margin: "8px 0 7px",
+    color: theme.palette.text.secondary,
+    margin: theme.spacing(1, 0, 0.75),
   },
-
-  layerThumbGrid: {
+  layerGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    columnGap: 8,
-    rowGap: 9,
-    marginBottom: 12,
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: theme.spacing(1),
   },
-
-  layerThumbButton: {
-    border: "none",
-    background: "transparent",
-    padding: 0,
+  radioItem: {
     margin: 0,
-    cursor: "pointer",
+    alignItems: "stretch",
+  },
+  radioPaper: {
+    width: "100%",
+    minHeight: 78,
+    padding: theme.spacing(0.75),
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: 10,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    outline: "none",
-    minWidth: 0,
-  },
-
-  layerThumbButtonActive: {
-    "& $layerThumbImage": {
-      borderColor: "#1a73e8",
-      boxShadow: "0 0 0 2px rgba(26,115,232,.16)",
-      backgroundColor: "#eff6ff",
-    },
-    "& $layerThumbLabel": {
-      color: "#1a73e8",
-      fontWeight: 700,
-    },
-  },
-
-  layerThumbImage: {
-    width: 42,
-    height: 42,
-    border: "1px solid #d8dee8",
-    borderRadius: 9,
-    backgroundColor: "#f8fafc",
-    backgroundImage: `
-      linear-gradient(135deg, rgba(255,255,255,.75) 0 20%, transparent 21%),
-      linear-gradient(145deg, transparent 0 45%, rgba(89, 170, 96, .48) 46% 54%, transparent 55%),
-      linear-gradient(25deg, transparent 0 48%, rgba(245, 180, 57, .58) 49% 52%, transparent 53%)
-    `,
-    display: "flex",
-    alignItems: "center",
     justifyContent: "center",
-    color: "#334155",
-    overflow: "hidden",
-    "& .material-symbols-outlined": {
-      fontSize: 20,
-      backgroundColor: "rgba(255,255,255,.78)",
-      borderRadius: 5,
-    },
-  },
-
-  layerThumbLabel: {
-    marginTop: 4,
-    fontSize: 10,
-    color: "#475569",
-    lineHeight: 1.15,
-    textAlign: "center",
-    maxWidth: 72,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
-
-  opacityArea: {
-    padding: "0 2px 8px",
-  },
-
-  opacityRange: {
-    width: "100%",
-    accentColor: "#3b82f6",
-  },
-
-  opacityScale: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: 9,
-    color: "#94a3b8",
-    marginTop: 0,
-  },
-
-  layerSectionDivider: {
-    height: 1,
-    backgroundColor: "#eef2f7",
-    margin: "8px -9px",
-  },
-
-  layerCheckRow: {
-    width: "100%",
-    minHeight: 32,
-    border: "none",
-    backgroundColor: "transparent",
-    display: "flex",
-    alignItems: "center",
-    gap: 5,
-    padding: "4px 0",
-    cursor: "pointer",
-    outline: "none",
-    textAlign: "left",
-  },
-
-  layerCheckLabel: {
-    flexGrow: 1,
-    fontSize: 12,
-    color: "#334155",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-
-  layerCheckExtra: {
-    flexShrink: 0,
-    display: "flex",
-    alignItems: "center",
-  },
-
-  layerMiniSelect: {
-    height: 26,
-    border: "1px solid #d8dee8",
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-    color: "#334155",
-    fontSize: 10,
-    padding: "0 6px",
-    display: "flex",
-    alignItems: "center",
-    gap: 0,
-    cursor: "pointer",
-    outline: "none",
-  },
-
-  layerSwitchArea: {
-    display: "flex",
-    alignItems: "center",
     gap: 4,
   },
-
-  layerSwitch: {
-    width: 28,
-    height: 16,
-    borderRadius: 999,
-    backgroundColor: "#cbd5e1",
-    position: "relative",
-    display: "inline-flex",
-    alignItems: "center",
-    padding: 2,
-    cursor: "pointer",
-    flexShrink: 0,
+  radioPaperActive: {
+    borderColor: theme.palette.primary.main,
+    backgroundColor: "#eff6ff",
+    boxShadow: "0 0 0 2px rgba(26, 115, 232, 0.14)",
   },
-
-  layerSwitchOn: {
-    backgroundColor: "#60a5fa",
-    "& $layerSwitchThumb": {
-      transform: "translateX(12px)",
-    },
+  radioControl: {
+    display: "none",
   },
-
-  layerSwitchThumb: {
-    width: 12,
-    height: 12,
-    borderRadius: "50%",
-    backgroundColor: "#ffffff",
-    transition: "transform .2s ease",
-    boxShadow: "0 1px 2px rgba(0,0,0,.18)",
+  layerIcon: {
+    color: theme.palette.text.secondary,
   },
-
-  layerSwitchLabel: {
-    fontSize: 10,
-    color: "#64748b",
-    whiteSpace: "nowrap",
+  layerIconActive: {
+    color: theme.palette.primary.main,
   },
-
-  layerLinkList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 6,
-    padding: "6px 0",
-  },
-
-  layerLinkButton: {
-    width: "100%",
-    height: 30,
-    border: "1px solid #93c5fd",
-    borderRadius: 8,
-    backgroundColor: "#ffffff",
-    color: "#3b82f6",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
-    cursor: "pointer",
-    outline: "none",
-  },
-
-  layerLinkLabel: {
+  layerLabel: {
     fontSize: 11,
     fontWeight: 700,
-    color: "#3b82f6",
+    textAlign: "center",
+  },
+  opacityArea: {
+    padding: theme.spacing(1, 1, 0),
+  },
+  marks: {
+    fontSize: 9,
+  },
+  list: {
+    padding: 0,
+  },
+  listItem: {
+    minHeight: 42,
+    paddingLeft: 0,
+    paddingRight: 86,
+  },
+  listIcon: {
+    minWidth: 32,
+    color: theme.palette.text.secondary,
+  },
+  listText: {
+    "& .MuiListItemText-primary": {
+      fontSize: 13,
+      fontWeight: 600,
+    },
+  },
+  secondaryAction: {
+    right: 0,
+  },
+  miniButton: {
+    minWidth: 58,
+    height: 28,
+    padding: theme.spacing(0, 0.75),
+    borderRadius: 8,
+    fontSize: 11,
+  },
+  switchLabel: {
+    display: "flex",
+    alignItems: "center",
+    gap: 2,
+  },
+  switchText: {
+    fontSize: 10,
+    color: theme.palette.text.secondary,
+  },
+  linkList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(0.75),
+    padding: theme.spacing(0.75, 0),
+  },
+  linkButton: {
+    justifyContent: "center",
+    height: 34,
+    borderRadius: 8,
+    fontWeight: 700,
   },
 }));
 
-function LayerThumb({ item, active, onClick }) {
+function BaseLayerOption({ item, active }) {
   const classes = useStyles();
+  const IconComponent = item.Icon;
 
   return (
-      <button
-          type="button"
-          className={`${classes.layerThumbButton} ${
-              active ? classes.layerThumbButtonActive : ""
-          }`}
-          onClick={onClick}
+    <Paper
+      className={`${classes.radioPaper} ${active ? classes.radioPaperActive : ""}`}
+      elevation={0}
+    >
+      <IconComponent className={active ? classes.layerIconActive : classes.layerIcon} />
+      <Typography
+        className={classes.layerLabel}
+        color={active ? "primary" : "textSecondary"}
       >
-        <Box className={classes.layerThumbImage}>
-          <span className="material-symbols-outlined">{item.icon}</span>
-        </Box>
-        <Typography className={classes.layerThumbLabel}>{item.label}</Typography>
-      </button>
+        {item.label}
+      </Typography>
+    </Paper>
   );
 }
 
-function LayerCheckboxRow({ checked, label, extra, onClick }) {
+function LayerVisibilityRow({ checked, label, onToggle, secondaryAction }) {
   const classes = useStyles();
 
   return (
-      <button type="button" className={classes.layerCheckRow} onClick={onClick}>
-      <span
-          className="material-symbols-outlined"
-          style={{
-            color: checked ? "#1a73e8" : "#94a3b8",
-            fontSize: 18,
-          }}
-      >
-        {checked ? "check_box" : "check_box_outline_blank"}
-      </span>
-
-        <span
-            className="material-symbols-outlined"
-            style={{ color: "#64748b", fontSize: 16 }}
-        >
-        apps
-      </span>
-
-        <Typography className={classes.layerCheckLabel}>{label}</Typography>
-
-        {extra && <Box className={classes.layerCheckExtra}>{extra}</Box>}
-      </button>
+    <ListItem button className={classes.listItem} onClick={onToggle}>
+      <ListItemIcon className={classes.listIcon}>
+        <Checkbox
+          edge="start"
+          checked={checked}
+          color="primary"
+          tabIndex={-1}
+          disableRipple
+          inputProps={{ "aria-label": label }}
+        />
+      </ListItemIcon>
+      <ListItemIcon className={classes.listIcon}>
+        <AppsIcon fontSize="small" />
+      </ListItemIcon>
+      <ListItemText className={classes.listText} primary={label} />
+      {secondaryAction && (
+        <ListItemSecondaryAction className={classes.secondaryAction}>
+          {secondaryAction}
+        </ListItemSecondaryAction>
+      )}
+    </ListItem>
   );
 }
 
-function LinkButton({ icon, label }) {
+function LinkButton({ icon: IconComponent, label }) {
   const classes = useStyles();
 
   return (
-      <button type="button" className={classes.layerLinkButton}>
-      <span className="material-symbols-outlined" style={{ fontSize: 17 }}>
-        {icon}
-      </span>
-        <Typography className={classes.layerLinkLabel}>{label}</Typography>
-      </button>
+    <Button
+      className={classes.linkButton}
+      variant="outlined"
+      color="primary"
+      startIcon={<IconComponent />}
+    >
+      {label}
+    </Button>
   );
 }
 
 export default function LayerSidebar({
-                                       open,
-                                       onClose,
-                                       baseLayer,
-                                       onChangeBaseLayer,
-                                       addressLayerVisible,
-                                       onToggleAddressLayer,
-                                       shapeLayerVisible,
-                                       onToggleShapeLayer,
-                                     }) {
+  open,
+  onClose,
+  baseLayer,
+  onChangeBaseLayer,
+  addressLayerVisible,
+  onToggleAddressLayer,
+  shapeLayerVisible,
+  onToggleShapeLayer,
+}) {
   const classes = useStyles();
 
   const [opacity, setOpacity] = useState(100);
@@ -388,134 +278,130 @@ export default function LayerSidebar({
   const [lotNumberVisible, setLotNumberVisible] = useState(false);
   const [bookmarkVisible, setBookmarkVisible] = useState(true);
   const [registeredOwnerMapVisible, setRegisteredOwnerMapVisible] =
-      useState(false);
+    useState(false);
 
   return (
-      <>
-        {open && <div className={classes.sidebarBackdrop} onClick={onClose} />}
-
-        <div
-            className={`${classes.layerSidebar} ${
-                open ? classes.layerSidebarOpen : ""
-            }`}
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      classes={{ paper: classes.paper }}
+    >
+      <Box className={classes.header}>
+        <IconButton
+          className={classes.closeButton}
+          aria-label="レイヤを閉じる"
+          onClick={onClose}
         >
-          <Box className={classes.layerSidebarHeader}>
-            <Box className={classes.layerSidebarHeaderTop}>
-              <button
-                  type="button"
-                  className={classes.layerSidebarCloseButton}
-                  onClick={onClose}
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+          <CloseIcon fontSize="small" />
+        </IconButton>
 
-              <Box className={classes.layerSidebarTitleBox}>
-                <Typography className={classes.layerSidebarTitle}>
-                  レイヤ
-                </Typography>
-                <Typography className={classes.layerSidebarSubTitle}>
-                  地図表示を切り替え
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
+        <Box className={classes.titleBox}>
+          <Typography className={classes.title}>レイヤ</Typography>
+          <Typography className={classes.subTitle}>地図表示を切り替え</Typography>
+        </Box>
+      </Box>
 
-          <Box className={classes.layerSidebarBody}>
-            <Typography className={classes.sectionTitle}>背景地図</Typography>
+      <Box className={classes.body}>
+        <Typography className={classes.sectionTitle}>背景地図</Typography>
 
-            <Box className={classes.layerThumbGrid}>
-              {BASE_LAYERS.map((item) => (
-                  <LayerThumb
-                      key={item.id}
-                      item={item}
-                      active={baseLayer === item.id}
-                      onClick={() => onChangeBaseLayer(item.id)}
-                  />
-              ))}
-            </Box>
-
-            <Box className={classes.opacityArea}>
-              <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="10"
-                  value={opacity}
-                  className={classes.opacityRange}
-                  onChange={(event) => setOpacity(Number(event.target.value))}
+        <RadioGroup
+          value={baseLayer}
+          onChange={(event) => onChangeBaseLayer(event.target.value)}
+        >
+          <Box className={classes.layerGrid}>
+            {BASE_LAYERS.map((item) => (
+              <FormControlLabel
+                key={item.id}
+                className={classes.radioItem}
+                value={item.id}
+                control={<Radio className={classes.radioControl} />}
+                label={<BaseLayerOption item={item} active={baseLayer === item.id} />}
               />
-
-              <Box className={classes.opacityScale}>
-                <span>0%</span>
-                <span>20%</span>
-                <span>40%</span>
-                <span>60%</span>
-                <span>80%</span>
-                <span>100%</span>
-              </Box>
-            </Box>
-
-            <Box className={classes.layerSectionDivider} />
-
-            <LayerCheckboxRow
-                checked={boundaryVisible}
-                label="行政界"
-                onClick={() => setBoundaryVisible((current) => !current)}
-                extra={
-                  <button type="button" className={classes.layerMiniSelect}>
-                    自動
-                    <span
-                        className="material-symbols-outlined"
-                        style={{ fontSize: 15 }}
-                    >
-                  expand_more
-                </span>
-                  </button>
-                }
-            />
-
-            <LayerCheckboxRow
-                checked={lotNumberVisible}
-                label="地番"
-                onClick={() => setLotNumberVisible((current) => !current)}
-                extra={
-                  <Box className={classes.layerSwitchArea}>
-                <span
-                    className={`${classes.layerSwitch} ${
-                        registeredOwnerMapVisible ? classes.layerSwitchOn : ""
-                    }`}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setRegisteredOwnerMapVisible((current) => !current);
-                    }}
-                >
-                  <span className={classes.layerSwitchThumb} />
-                </span>
-                    <Typography className={classes.layerSwitchLabel}>
-                      登記所
-                    </Typography>
-                  </Box>
-                }
-            />
-
-            <LayerCheckboxRow
-                checked={bookmarkVisible}
-                label="ブックマーク"
-                onClick={() => setBookmarkVisible((current) => !current)}
-            />
-
-            <Box className={classes.layerSectionDivider} />
-
-            <Box className={classes.layerLinkList}>
-              <LinkButton icon="home_work" label="ハザード" />
-              <LinkButton icon="location_city" label="地域情報" />
-              <LinkButton icon="public" label="公開情報" />
-            </Box>
-
-            <Box className={classes.layerSectionDivider} />
-
+            ))}
           </Box>
-        </div>
-      </>
+        </RadioGroup>
+
+        <Box className={classes.opacityArea}>
+          <Slider
+            value={opacity}
+            min={0}
+            max={100}
+            step={10}
+            marks={[
+              { value: 0, label: "0%" },
+              { value: 50, label: "50%" },
+              { value: 100, label: "100%" },
+            ]}
+            valueLabelDisplay="auto"
+            classes={{ markLabel: classes.marks }}
+            onChange={(event, value) => setOpacity(value)}
+            aria-labelledby="レイヤ透明度"
+          />
+        </Box>
+
+        <Divider />
+
+        <List className={classes.list}>
+          <LayerVisibilityRow
+            checked={addressLayerVisible}
+            label="住所ポイント"
+            onToggle={onToggleAddressLayer}
+          />
+          <LayerVisibilityRow
+            checked={shapeLayerVisible}
+            label="図形"
+            onToggle={onToggleShapeLayer}
+          />
+          <LayerVisibilityRow
+            checked={boundaryVisible}
+            label="行政界"
+            onToggle={() => setBoundaryVisible((current) => !current)}
+            secondaryAction={
+              <Button
+                className={classes.miniButton}
+                variant="outlined"
+                endIcon={<ArrowDropDownIcon />}
+              >
+                自動
+              </Button>
+            }
+          />
+          <LayerVisibilityRow
+            checked={lotNumberVisible}
+            label="地番"
+            onToggle={() => setLotNumberVisible((current) => !current)}
+            secondaryAction={
+              <Box className={classes.switchLabel}>
+                <Switch
+                  size="small"
+                  color="primary"
+                  checked={registeredOwnerMapVisible}
+                  onClick={(event) => event.stopPropagation()}
+                  onChange={() =>
+                    setRegisteredOwnerMapVisible((current) => !current)
+                  }
+                  inputProps={{ "aria-label": "登記所地図を切り替え" }}
+                />
+                <Typography className={classes.switchText}>登記所</Typography>
+              </Box>
+            }
+          />
+          <LayerVisibilityRow
+            checked={bookmarkVisible}
+            label="ブックマーク"
+            onToggle={() => setBookmarkVisible((current) => !current)}
+          />
+        </List>
+
+        <Divider />
+
+        <Box className={classes.linkList}>
+          <LinkButton icon={HomeWorkIcon} label="ハザード" />
+          <LinkButton icon={LocationCityIcon} label="地域情報" />
+          <LinkButton icon={PublicIcon} label="公開情報" />
+        </Box>
+      </Box>
+    </Drawer>
   );
 }

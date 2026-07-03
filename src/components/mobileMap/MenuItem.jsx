@@ -1,67 +1,108 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import AddAPhotoIconModule from "@material-ui/icons/AddAPhoto";
+import AddLocationIconModule from "@material-ui/icons/AddLocation";
+import BookmarkIconModule from "@material-ui/icons/Bookmark";
+import ChevronRightIconModule from "@material-ui/icons/ChevronRight";
+import DirectionsIconModule from "@material-ui/icons/Directions";
+import FormatListBulletedIconModule from "@material-ui/icons/FormatListBulleted";
+import HelpIconModule from "@material-ui/icons/Help";
+import LayersIconModule from "@material-ui/icons/Layers";
+import LinkIconModule from "@material-ui/icons/Link";
+import ListAltIconModule from "@material-ui/icons/ListAlt";
+import MailIconModule from "@material-ui/icons/Mail";
+import NotificationsIconModule from "@material-ui/icons/Notifications";
+import SettingsIconModule from "@material-ui/icons/Settings";
+import StraightenIconModule from "@material-ui/icons/Straighten";
 
-const useStyles = makeStyles(() => ({
-  menuItem: {
-    width: "100%",
-    minHeight: 58,
-    padding: "10px 14px",
-    backgroundColor: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: 12,
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    cursor: "pointer",
-    outline: "none",
-    textAlign: "left",
+const AddAPhotoIcon = AddAPhotoIconModule.default || AddAPhotoIconModule;
+const AddLocationIcon = AddLocationIconModule.default || AddLocationIconModule;
+const BookmarkIcon = BookmarkIconModule.default || BookmarkIconModule;
+const ChevronRightIcon =
+  ChevronRightIconModule.default || ChevronRightIconModule;
+const DirectionsIcon = DirectionsIconModule.default || DirectionsIconModule;
+const FormatListBulletedIcon =
+  FormatListBulletedIconModule.default || FormatListBulletedIconModule;
+const HelpIcon = HelpIconModule.default || HelpIconModule;
+const LayersIcon = LayersIconModule.default || LayersIconModule;
+const LinkIcon = LinkIconModule.default || LinkIconModule;
+const ListAltIcon = ListAltIconModule.default || ListAltIconModule;
+const MailIcon = MailIconModule.default || MailIconModule;
+const NotificationsIcon =
+  NotificationsIconModule.default || NotificationsIconModule;
+const SettingsIcon = SettingsIconModule.default || SettingsIconModule;
+const StraightenIcon = StraightenIconModule.default || StraightenIconModule;
+
+const ICONS = {
+  add_a_photo: AddAPhotoIcon,
+  add_location: AddLocationIcon,
+  bookmark: BookmarkIcon,
+  campaign: NotificationsIcon,
+  format_list_bulleted: FormatListBulletedIcon,
+  help: HelpIcon,
+  layers: LayersIcon,
+  link: LinkIcon,
+  list_alt: ListAltIcon,
+  mail: MailIcon,
+  route: DirectionsIcon,
+  settings: SettingsIcon,
+  straighten: StraightenIcon,
+};
+
+const useStyles = makeStyles((theme) => ({
+  item: {
+    minHeight: 64,
+    marginBottom: theme.spacing(1),
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: 10,
+    backgroundColor: theme.palette.background.paper,
+    paddingRight: theme.spacing(5),
   },
-  menuIconBox: {
+  avatar: {
     width: 38,
     height: 38,
-    borderRadius: 10,
+    color: theme.palette.primary.main,
     backgroundColor: "#eff6ff",
-    color: "#1a73e8",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
   },
-  menuText: {
-    flexGrow: 1,
-    minWidth: 0,
-  },
-  menuTitle: {
+  primary: {
     fontSize: 14,
     fontWeight: 700,
-    color: "#1f2937",
+    color: theme.palette.text.primary,
   },
-  menuSub: {
+  secondary: {
     fontSize: 12,
-    color: "#6b7280",
+    color: theme.palette.text.secondary,
+  },
+  chevron: {
+    color: theme.palette.action.disabled,
   },
 }));
 
 export default function MenuItem({ icon, title, sub, onClick }) {
   const classes = useStyles();
+  const IconComponent = ICONS[icon] || LayersIcon;
 
   return (
-    <button type="button" className={classes.menuItem} onClick={onClick}>
-      <Box className={classes.menuIconBox}>
-        <span className="material-symbols-outlined">{icon}</span>
-      </Box>
-
-      <Box className={classes.menuText}>
-        <Typography className={classes.menuTitle}>{title}</Typography>
-        {sub && <Typography className={classes.menuSub}>{sub}</Typography>}
-      </Box>
-
-      <span className="material-symbols-outlined" style={{ color: "#cbd5e1" }}>
-        chevron_right
-      </span>
-    </button>
+    <ListItem button className={classes.item} onClick={onClick}>
+      <ListItemAvatar>
+        <Avatar className={classes.avatar}>
+          <IconComponent fontSize="small" />
+        </Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        primary={title}
+        secondary={sub}
+        primaryTypographyProps={{ className: classes.primary }}
+        secondaryTypographyProps={{ className: classes.secondary }}
+      />
+      <ListItemSecondaryAction>
+        <ChevronRightIcon className={classes.chevron} />
+      </ListItemSecondaryAction>
+    </ListItem>
   );
 }

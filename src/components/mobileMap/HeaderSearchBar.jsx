@@ -1,15 +1,16 @@
-import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
+import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
+import MoreVertIconModule from "@material-ui/icons/MoreVert";
+import SearchIconModule from "@material-ui/icons/Search";
 
-const useStyles = makeStyles(() => ({
-  glassUi: {
-    background: "rgba(255, 255, 255, 0.95)",
-    backdropFilter: "blur(8px)",
-    WebkitBackdropFilter: "blur(8px)",
-  },
+const MoreVertIcon = MoreVertIconModule.default || MoreVertIconModule;
+const SearchIcon = SearchIconModule.default || SearchIconModule;
+
+const useStyles = makeStyles((theme) => ({
   headerContainer: {
     position: "absolute",
     top: 16,
@@ -22,49 +23,29 @@ const useStyles = makeStyles(() => ({
     borderRadius: 28,
     display: "flex",
     alignItems: "center",
-    padding: "0 8px 0 10px",
+    padding: theme.spacing(0, 1, 0, 0.75),
     border: "1px solid rgba(255, 255, 255, 0.5)",
+    background: "rgba(255, 255, 255, 0.95)",
+    backdropFilter: "blur(8px)",
+    WebkitBackdropFilter: "blur(8px)",
     boxShadow: "0 10px 18px rgba(30, 60, 90, 0.18)",
   },
-  headerIconButton: {
-    width: 40,
-    height: 40,
-    border: "none",
-    borderRadius: 20,
-    background: "transparent",
-    color: "#5f6368",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    padding: 0,
-    outline: "none",
-  },
-  headerSearchButton: {
-    width: 40,
-    height: 40,
-    border: "none",
-    borderRadius: 20,
-    background: "#eff6ff",
-    color: "#1a73e8",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    padding: 0,
-    outline: "none",
-  },
-  searchInput: {
-    flexGrow: 1,
+  input: {
+    flex: 1,
     minWidth: 0,
-    backgroundColor: "transparent",
-    border: "none",
-    outline: "none",
     fontSize: 15,
-    padding: "0 8px",
-    color: "#1f2937",
-    "&::placeholder": {
-      color: "#6b7280",
+    color: theme.palette.text.primary,
+  },
+  menuButton: {
+    color: theme.palette.text.secondary,
+  },
+  searchButton: {
+    width: 40,
+    height: 40,
+    color: theme.palette.primary.main,
+    backgroundColor: "#eff6ff",
+    "&:hover": {
+      backgroundColor: "#dbeafe",
     },
   },
 }));
@@ -74,24 +55,24 @@ export default function HeaderSearchBar({ onOpenMenu }) {
 
   return (
     <Box className={classes.headerContainer}>
-      <Paper className={`${classes.headerBar} ${classes.glassUi}`} elevation={0}>
-        <button
-          type="button"
-          className={classes.headerIconButton}
+      <Paper className={classes.headerBar} elevation={0}>
+        <IconButton
+          className={classes.menuButton}
+          aria-label="メニューを開く"
           onClick={onOpenMenu}
         >
-          <span className="material-symbols-outlined">more_vert</span>
-        </button>
+          <MoreVertIcon />
+        </IconButton>
 
-        <input
-          className={classes.searchInput}
-          type="text"
+        <InputBase
+          className={classes.input}
           placeholder="住所、施設名、地番を入力"
+          inputProps={{ "aria-label": "住所、施設名、地番を入力" }}
         />
 
-        <button type="button" className={classes.headerSearchButton}>
-          <span className="material-symbols-outlined">search</span>
-        </button>
+        <IconButton className={classes.searchButton} aria-label="検索">
+          <SearchIcon />
+        </IconButton>
       </Paper>
     </Box>
   );

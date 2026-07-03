@@ -1,4 +1,3 @@
-import React from "react";
 import { ThemeProvider } from "@material-ui/core/styles"; // ThemeProvider はここ
 import { createTheme } from "@material-ui/core";          // createTheme はコアから
 import CssBaseline from "@material-ui/core/CssBaseline";
